@@ -11,11 +11,11 @@ export default class SpriteGenerator {
         this.buffer = this.fontSize / 8;
         this.radius = this.fontSize / 3;
         this.cutoff = 0.25;
-        this.fontFamily = 'sans-serif';
-        // this.fontFamily = 'vedana';
+        // this.fontFamily = 'sans-serif';
+        this.fontFamily = 'vedana';
         // this.fontFamily = 'arial';
-        this.fontWeight = 'normal';
-        // this.fontWeight = 'bold';
+        // this.fontWeight = 'normal';
+        this.fontWeight = 'bold';
         // Size of one box of character
         let size = this.size = this.fontSize + this.buffer * 2;
 

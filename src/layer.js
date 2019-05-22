@@ -25,7 +25,8 @@ export default function(canvas, context, view, gl, textures, files, texts, event
 
     options = options || {};
     options.styles = options.styles || {};
-
+    
+  //
     let nodesFiller = (
       style => ({
         set: (v, e, iV, iI) => {

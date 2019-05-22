@@ -103,8 +103,12 @@ export default class GlyphAtlas {
         let split,
             name,
             id;
-
+        console.log('tis.ids')
+        console.log(this.ids)
         for (const key in this.ids) {
+            console.log('key')
+            console.log(key)
+
             split = key.split('#');
             name = split[0];
             id = split[1];
@@ -146,7 +150,9 @@ export default class GlyphAtlas {
 
         // compiles 'name' and glyph.id into a single string with a seperator '#'
         const key = `${name}#${glyph.id}`;
+        console.log('addgglyh wala key')
 
+        console.log(key)
         // if key is present in index and not present in ids then add it in ids
         if (this.index[key]) {
             if (this.ids[key].indexOf(id) < 0) {

@@ -54,7 +54,8 @@ export default class {
 
     // _files contains the file object of the glyph obtained via protobuf
     this._files = files;
-
+    console.log('this._files')
+    console.log(this._files)
     // Webgl Rendering context
     this._gl = gl;
 
@@ -109,6 +110,9 @@ export default class {
       // Cache the most used characters prior to the knowledge if they would be used in lables or not
       // TODO: Ideally get methods should return something which in-turn should pe passed to other variables
       this._getChar(String.fromCharCode(i));
+      console.log('biggggggggggggggg')
+      console.log(this._getChar(String.fromCharCode(i))
+      )
     }
     onLoad && onLoad.apply(this, arguments);
 
@@ -145,6 +149,8 @@ export default class {
       const imgData = this.spriteGenerator._makeRGBAImageData(glyph.bitmap, glyph.width, glyph.height);
       const testCanvas = document.getElementById("test-canvas");
       const ctx = testCanvas.getContext("2d");
+      console.log('img data')
+      console.log(imgData)
       ctx.putImageData(imgData, 10, 20);
       --t;
     }
@@ -160,7 +166,8 @@ export default class {
       fontSize, // fontSize
       markDirty, // callback function to be called if texture resizes
     );
-
+    console.log('this_reects')
+    console.log(this._rects)
     return (
       cache[glyphID] ||
       (cache[glyphID] = new SimpleGlyph(
@@ -194,14 +201,19 @@ export default class {
     let ret = [];
 
     for (let i = 0; i < text.length; i++) {
-
+      console.log('text n char')
+      console.log(text)
+      
       const char = this._getChar(text[i], markDirty);
+      console.log(char)
+
       const rect = char.rect || {};
 
       let horiAdvance;
 
       dx += horiBearingX;
-
+      console.log('neeche wala rect, bhut hai yaha')
+      console.log(rect)
       ret.push({
         width: rect.w,
         height: rect.h,
