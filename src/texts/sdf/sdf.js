@@ -120,7 +120,14 @@ export default class {
     return this.atlas.texture;
   }
 
-
+  //utility function to remove break the node labels at whitespaces or \n character
+  trimSpacesAndBreakWidth(text,i) {
+    while (text[i] !== '\n' && text[i] !== ' ') {
+      i += 1
+    }
+    let dx = x <= 0.5 ? 0  : -width ;
+    let dy = y-30;
+  }
   /**
    * Updates the 'texture' member variable of this.atlas object
    *
@@ -208,22 +215,21 @@ export default class {
 
     // "ret" must be the return object. "ret" is always the return object
     let ret = [];
-
-    for (let i = 0; i < text.length; i++) {
+    let it = 0;
+    while (it < text.length) {
       console.log('text n char')
       console.log(text)
-      console.log(text[i])
-      if (text[i] === '\n') {
-      //  trimSpacesAndBreakWidth()
-      console.log('\n')
-      
-        dx = x <= 0.5 ? 0 : -width;
-        dy = dy - 30
-
-      
+      console.log(text[it])
+      if (text[it] === '\n' || text[it] === ' ') {
+        
+        while (text[it] === '\n' || text[it] === ' ') {
+          it += 1
+        }
+        dx = x <= 0.5 ? 0  : -width ;
+        dy = dy-30;
       }
       else {
-        const char = this._getChar(text[i], markDirty);
+        const char = this._getChar(text[it], markDirty);
       console.log(char)
 
       const rect = char.rect || {};
@@ -249,6 +255,7 @@ export default class {
       });
 
       dx += char.advance;
+      it+=1;
       //      dx += rect.w;
       console.log('char advance and dx')
       console.log(dx)
