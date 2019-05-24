@@ -14,8 +14,8 @@ export default class SpriteGenerator {
         // this.fontFamily = 'sans-serif';
         this.fontFamily = 'vedana';
         // this.fontFamily = 'arial';
-        // this.fontWeight = 'normal';
-        this.fontWeight = 'bold';
+        this.fontWeight = 'normal';
+        // this.fontWeight = 'bold';
         // Size of one box of character
         let size = this.size = this.fontSize + this.buffer * 2;
 

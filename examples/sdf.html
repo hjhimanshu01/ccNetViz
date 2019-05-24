@@ -90,15 +90,19 @@
         }
       };
       var nodes = [
-      { label: "Hello"},
-      { label: "World" },
-      { label: "!" }
+      { label: "hello\n world\nyuhooooo"},
+      { label: "this \n this\nit!" },
+      { label: "change\nthis \marrrrr change " },
+      { label: "one more"},
+      {label: "another"}
     ];
     var edges = [
       { source: nodes[0], target: nodes[1] },
       { source: nodes[1], target: nodes[0] },
       { source: nodes[0], target: nodes[0] },
       { source: nodes[1], target: nodes[2] },
+      { source: nodes[3], target: nodes[2] },
+      { source: nodes[4], target: nodes[1]}
     ];
       var el = document.getElementById('container');
       var graph = new ccNetViz(el, conf);

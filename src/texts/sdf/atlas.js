@@ -92,7 +92,6 @@ export default class GlyphAtlas {
 
         // Unbinding the buffer channel
         gl.bindTexture(gl.TEXTURE_2D, null);
-
         // returning so formed texture
         return texture;
     }

@@ -28,7 +28,9 @@ function getPartitionStyle(style, baseStyle, styleProperty){
 
     copy(baseStyle);
     copy(style);
-
+    console.log(baseStyle)
+    console.log(style)
+    console.log(result)
     if (styleProperty) {
         copy(baseStyle[styleProperty]);
         style && copy(style[styleProperty]);

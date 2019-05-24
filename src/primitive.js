@@ -104,7 +104,8 @@ export default class primitive{
         sections = [];
         for (let p in parts) {
             iS = iB;
-
+            console.log(parts)
+            console.log(p)
             let section = {
                 style: getPartitionStyle(styles[p], baseStyle, styleProperty),
                 buffers: [],
