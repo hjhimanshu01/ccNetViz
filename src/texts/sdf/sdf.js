@@ -217,7 +217,7 @@ export default class {
    // x and y are the clipspace co-ordinates between 0 and 1
    // dx and dy shifts the position of label w.r.t possibly node
    // (TODO: dx and dy are calculated w.r.t what is not clear , please clear it if you find out)
-
+    width = wordWidth
     let dx = x <= 0.5 ? 0 : -width;
     let dy = y <= 0.5 ? 0 : -height;
 
