@@ -54,8 +54,7 @@ export default class {
 
     // _files contains the file object of the glyph obtained via protobuf
     this._files = files;
-    console.log('this._files')
-    console.log(this._files)
+
     // Webgl Rendering context
     this._gl = gl;
 
@@ -72,7 +71,7 @@ export default class {
     this._cachedGlyphs = {};
 
     // Client-Side builder of spritesheet
-    this.spriteGenerator = new SpriteGenerator();
+    this.spriteGenerator = new SpriteGenerator(20);
   }
 
 
@@ -110,7 +109,6 @@ export default class {
       // Cache the most used characters prior to the knowledge if they would be used in lables or not
       // TODO: Ideally get methods should return something which in-turn should pe passed to other variables
       this._getChar(String.fromCharCode(i));
-      
     }
     onLoad && onLoad.apply(this, arguments);
 
@@ -120,52 +118,55 @@ export default class {
     return this.atlas.texture;
   }
 
-  //utility function to remove break the node labels at whitespaces or \n character
-  trimSpacesAndBreakWidth(text,i) {
-    while (text[i] !== '\n' && text[i] !== ' ') {
-      i += 1
-    }
-    let dx = x <= 0.5 ? 0  : -width ;
-    let dy = y-30;
-  }
+
   /**
    * Updates the 'texture' member variable of this.atlas object
    *
    * text = single character which is to be added to the texture of 'this.atlas'
    * markDirty = ??? callback to be called if the size of the texture is resized
    */
-  // TODO: parameter name should be changed from 'text' to 'char'
-  _getChar(text, markDirty) {
+  _getChar(character, markDirty) {
     // curFont is same as style.pbf defined above
     // TODO: We are doing this too many times in this code. Find a better mech.
     const font = this.curFont;
 
-    // glyphId is the character code of the glyph passed in arguments under the name 'text'
-    // charCodeAt returns an integer between 0 and 65535 representing the UTF-16 code unit
-    // refer https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/charCodeAt
-    const glyphID = text.charCodeAt(0);
+   // charCodeAt returns an integer between 0 and 65535 representing the UTF-16 code unit
+   // refer https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/charCodeAt
+
+    const glyphID = character.charCodeAt(0);
 
     // Padding around the glyph
     const buffer = 0;
 
     const cache = (this._cachedGlyphs[font] || (this._cachedGlyphs[font] = {}));
-    const glyph = (cache[glyphID] && cache[glyphID].glyph) || this.spriteGenerator.draw(text);
+    const glyph = (cache[glyphID] && cache[glyphID].glyph) || this.spriteGenerator.draw(character);
     
-    // TODO: Delete following testing code
+    // Testing code for new developer, if stuck, uncomment the lines below 
+    // The code below renders a testing canvas with first alphabet it encounters , value of t is in sdf.html
+    // if you want to show more alphabets , just increase "t" in sdf.html and 
+    // change ctx.putImageData(imgData, 10, 20); to something variable
+
+    // if(t) {
+    //   const imgData = this.spriteGenerator._makeRGBAImageData(glyph.bitmap, glyph.width, glyph.height);
+    //   const testCanvas = document.getElementById("test-canvas");
+    //   const ctx = testCanvas.getContext("2d");
+    //   ctx.putImageData(imgData, 10, 20);
+    //   --t;
+    // }
+    
+    // After uncommenting the lines above , comment the "if" code below, this might help in debugging 
+
     if(t) {
-      const imgData = this.spriteGenerator._makeRGBAImageData(glyph.bitmap, glyph.width, glyph.height);
+
       const testCanvas = document.getElementById("test-canvas");
-      const ctx = testCanvas.getContext("2d");
-      console.log('img data')
-      console.log(imgData)
-      ctx.putImageData(imgData, 10, 20);
-      --t;
+      testCanvas.width = 0;
+      testCanvas.height = 0;
     }
 
     const fontSize = this.spriteGenerator.fontSize;
     
     if (!this._rects[font]) this._rects[font] = {};
-    let rect = this._rects[font][text] = this.atlas.addGlyph(
+    let rect = this._rects[font][character] = this.atlas.addGlyph(
       glyphID, // character id
       this.curFont, // contains url of the font file on server
       glyph, // glyph object
@@ -173,8 +174,7 @@ export default class {
       fontSize, // fontSize
       markDirty, // callback function to be called if texture resizes
     );
-    console.log('this_reects')
-    console.log(this._rects)
+
     return (
       cache[glyphID] ||
       (cache[glyphID] = new SimpleGlyph(
@@ -186,6 +186,7 @@ export default class {
   }
 
   get(text, x, y, markDirty) {
+    let wordWidth = 0;
     let width = 0;
     let height = 0;
 
@@ -193,55 +194,58 @@ export default class {
     const horiBearingY = 2;
 
     for (let i = 0; i < text.length; i++) {
+      
+      
       const char = this._getChar(text[i], markDirty);
       const rect = char.rect || {};
       
-      // Initially in the "get" function , height is undefined so , height = 0 , now rect.h and char.top
-      //decide the height and then max of them is taken each time to have a max height that fits each char
+     // Initially in the "get" function , height is undefined so , height = 0 , now rect.h and char.top
+     //decide the height and then max of them is taken each time to have a max height that fits each char
+
       height = Math.max(height, rect.h - char.top);
-      // addiding const horiBearingx and cahr.advance wo get the total width of label
-      width += char.advance + horiBearingX;
-      console.log('char.advance and horiBearingX')
-      console.log(char.advance)
-      console.log(horiBearingX)
+
+      // highest word length woul be selected as the width
+      if ((text[i] === ' ' || text[i] === '\n') && (wordWidth > width)) {
+        width = wordWidth
+        wordWidth = 0
+      }
+      // addiding const horiBearingx and char.advance wo get the total width of label
+      wordWidth += char.advance + horiBearingX;
     }
-    // x and y are the clipspace co-ordinates between 0 and 1 
-    // dx and dy shifts the position of label w.r.t possibly node 
-    // (TODO: dx and dy are calculated w.r.t what is not clear , please clear it if you find out)
-    let dx = x <= 0.5 ? 0  : -width ;
+    
+  
+   // x and y are the clipspace co-ordinates between 0 and 1
+   // dx and dy shifts the position of label w.r.t possibly node
+   // (TODO: dx and dy are calculated w.r.t what is not clear , please clear it if you find out)
+
+    let dx = x <= 0.5 ? 0 : -width;
     let dy = y <= 0.5 ? 0 : -height;
 
 
 
     // "ret" must be the return object. "ret" is always the return object
     let ret = [];
-    let it = 0;
-    while (it < text.length) {
-      console.log('text n char')
-      console.log(text)
-      console.log(text[it])
-      if (text[it] === '\n' || text[it] === ' ') {
-        
-        while (text[it] === '\n' || text[it] === ' ') {
-          it += 1
+
+    let iterator = 0;
+
+    while (iterator < text.length) {
+      
+      if ((text[iterator] === '\n' || text[iterator] === ' ') && (iterator != 0 || iterator != text.length-1) ) {
+        while (text[iterator] === '\n' || text[iterator] === ' ') {
+          iterator += 1
         }
         dx = x <= 0.5 ? 0  : -width ;
         dy = dy-30;
       }
       else {
-        const char = this._getChar(text[it], markDirty);
-      console.log(char)
+        const char = this._getChar(text[iterator], markDirty);
 
       const rect = char.rect || {};
 
       let horiAdvance;
 
       dx += horiBearingX;
-      console.log('horiBearing n dx phle')
-      console.log(horiBearingX)
-      console.log(dx)
-      console.log('neeche wala rect, bhut hai yaha')
-      console.log(rect)
+      
       // rect.x rect.w rect.h rect.y are all atlas widths heigths x y positions etc 
       ret.push({
         width: rect.w,
@@ -255,11 +259,9 @@ export default class {
       });
 
       dx += char.advance;
-      it+=1;
+      iterator+=1;
       //      dx += rect.w;
-      console.log('char advance and dx')
-      console.log(dx)
-      console.log(char.advance)
+      
     }
       }
       
