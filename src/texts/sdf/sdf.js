@@ -71,7 +71,7 @@ export default class {
     this._cachedGlyphs = {};
 
     // Client-Side builder of spritesheet
-    this.spriteGenerator = new SpriteGenerator(20);
+    this.spriteGenerator = new SpriteGenerator();
   }
 
 
@@ -235,7 +235,7 @@ export default class {
           iterator += 1
         }
         dx = x <= 0.5 ? 0  : -width ;
-        dy = dy-30;
+        dy = dy-Math.floor(height/3);
       }
       else {
         const char = this._getChar(text[iterator], markDirty);
